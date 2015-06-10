@@ -23,7 +23,7 @@ def calculate_predictions(opponent,player,game_diff,home):
         db="Player_Team_Data",
         cursorclass=MySQLdb.cursors.DictCursor)
 
-    cmd_target = 'SELECT FGpercent,PTS,3P,TRB,AST,STL,BLK,TOV FROM NBA_player_data WHERE Player_Name IN (\'' + player + '\');'
+    cmd_target = 'SELECT PTS,3P,TRB,AST,STL,BLK,TOV FROM NBA_player_data WHERE Player_Name IN (\'' + player + '\');'
     cmd_train = 'SELECT Rk,Home_Away,DateDiff,TeamID,Win,OPPG,OTPR,O3Ppercent,ORPG,OBPG,OSPG,DEF,O3PM,OFGpercent,OTPG,OAPG,OFTpercent,TPG,SPG,TRBR,OBLKpercent FROM NBA_player_data WHERE Player_Name IN (\'' + player + '\');'
     cmd_truth = 'SELECT FGpercent,PTS,3P,AST,TRB,STL,BLK,TOV FROM NBA_player_data WHERE Player_Name IN (\'' + player + '\') AND Rk >50 AND Rk <60 ;'
     cmd_test = 'SELECT Rk,Home_Away,DateDiff,TeamID,Win,OPPG,OTPR,O3Ppercent,ORPG,OBPG,OSPG,DEF,O3PM,OFGpercent,OTPG,OAPG,OFTpercent,TPG,SPG,TRBR,OBLKpercent FROM NBA_player_data WHERE Player_Name IN (\'' + player + '\') AND Rk >50 AND Rk <60;'
@@ -55,14 +55,21 @@ def calculate_predictions(opponent,player,game_diff,home):
     df_evaluate = df_raw_scaled.tail(1)
     df_train_scaled = df_raw_scaled.iloc[:-1]
     rf = RandomForestClassifier(n_estimators=1000)
+    average_stats=df_target.mean()
     rf.fit(df_train_scaled, df_target)
     predictions = rf.predict(df_evaluate)
-    return predictions
+    return predictions,average_stats.round()
     
-def get_fanduel(boxscore):
-    fanduel = boxscore[1]+boxscore[3]*1.2+boxscore[4]*1.5+boxscore[5]*2+boxscore[6]*2-boxscore[7]
-    return fanduel
+def get_fanduel(predict,avg):
+    fanduel_pre = predict[0]+predict[2]*1.2+predict[3]*1.5+predict[4]*2+predict[5]*2-predict[6]
+    fanduel_avg = avg[0]+avg[2]*1.2+avg[3]*1.5+avg[4]*2+avg[5]*2-avg[6]
+    fanduel_outlook = fanduel_pre - fanduel_avg
+    return fanduel_pre, fanduel_avg, fanduel_outlook
 
+def get_boxscore_diff(predict, avg):
+    diff = predict[0] - avg
+    return diff
+    
 def main():
   # This basic command line argument parsing code is provided.
   # Add code to call your functions below.
@@ -81,18 +88,17 @@ def main():
     opponent = args[2]
     game_diff = args[3]
     home = args [4]
-    prediction=calculate_predictions(opponent,player,game_diff,home)
-    print 'FG%: ', prediction[0][0]
-    print 'PTS: ', prediction[0][1]
-    print '3P: ', prediction[0][2]
-    print 'TRB: ', prediction[0][3]
-    print 'AST: ', prediction[0][4]
-    print 'STL: ', prediction[0][5]  
-    print 'BLK: ', prediction[0][6]
-    print 'TOV: ', prediction[0][7]
-    fanduel=get_fanduel(prediction[0])
-    print fanduel
-
+    prediction,avg_stats=calculate_predictions(opponent,player,game_diff,home)
+    print 'Predict: PTS: ', prediction[0][0], ' 3P: ', prediction[0][1], ' TRB: ', prediction[0][2], ' AST: ', prediction[0][3], ' STL: ', prediction[0][4], ' BLK: ', prediction[0][5], ' TOV: ', prediction[0][6]
+    print 'Average: PTS: ', avg_stats[0], ' 3P: ', avg_stats[1], ' TRB: ', avg_stats[2], ' AST: ', avg_stats[3], ' STL: ', avg_stats[4], ' BLK: ', avg_stats[5], ' TOV: ', avg_stats[6]
+    diff_predict = get_boxscore_diff(prediction,avg_stats)
+    print 'Outlook: PTS:  ', diff_predict[0], ' 3P: ', diff_predict[1], ' TRB: ', diff_predict[2], ' AST: ', diff_predict[3], ' STL: ', diff_predict[4], ' BLK: ', diff_predict[5], ' TOV: ', diff_predict[6]
+    
+    predict_fanduel, average_fanduel, outlook_fanduel=get_fanduel(prediction[0],avg_stats)
+   
+    print 'Fanduel (Predict): ', predict_fanduel
+    print 'Fanduel (Average): ', average_fanduel
+    print 'Fanduel (Outlook): ', outlook_fanduel
   # +++your code here+++
   # Call your functions
   
