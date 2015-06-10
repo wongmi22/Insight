@@ -171,11 +171,11 @@ def clean_data_and_write_sql(path):
         # read in team.csv
         df_teams_new = pd.read_csv('~/Insight/TeamStats.csv')
         # merge with player DataFrame
-        complete_csv=pd.merge(df_player_clean, df_teams_new, on=['Opp','Month'], how='inner')
+        complete_pandas=pd.merge(df_player_clean, df_teams_new, on=['Opp','Month'], how='inner')
         # SQL doesn't like % for the column names
-        complete_csv = complete_csv.rename(columns={'FG%': 'FGpercent','3P%':'3Ppercent','FT%':'FTpercent','O3P%':'O3Ppercent','OFG%':'OFGpercent','OFT%':'OFTpercent','OBLK%':'OBLKpercent'})
+        complete_pandas = complete_pandas.rename(columns={'FG%': 'FGpercent','3P%':'3Ppercent','FT%':'FTpercent','O3P%':'O3Ppercent','OFG%':'OFGpercent','OFT%':'OFTpercent','OBLK%':'OBLKpercent'})
         engine = create_engine("mysql+pymysql://root@localhost/Player_Team_Data") 
-        complete_csv.to_sql('NBA_player_data', engine,if_exists='append')
+        complete_pandas.to_sql('NBA_player_data', engine,if_exists='append')
   
     
 def main():
