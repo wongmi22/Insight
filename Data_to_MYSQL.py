@@ -38,6 +38,8 @@ def get_gameday_diff_series(seri):
             t2 = get_realtime(seri[index+1])
             if t2.tm_year == t1.tm_year:
                 diff = abs(t2.tm_yday - t1.tm_yday)
+                if diff > 4:
+                    diff=4
             else:
                 diff = t2.tm_yday + (365 - t1.tm_yday)  
                 if diff > 4:
