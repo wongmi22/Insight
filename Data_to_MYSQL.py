@@ -64,9 +64,9 @@ def get_home_assign_series(seri):
     home_away =[]
     for elem in (seri):
         if elem == '@' :
-            h = 1
+            h = 2
         else:
-            h=0
+            h=1
         home_away.append(h)
     return home_away
 
