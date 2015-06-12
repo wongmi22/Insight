@@ -23,7 +23,11 @@ from sklearn import preprocessing
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 import sys
-
+from scipy import stats
+import scipy as sp
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 def get_data(filenames_dict,first_names,last_names, filenames):
     # return a dict with the player names that are in the downloaded player files
@@ -53,6 +57,7 @@ def get_data(filenames_dict,first_names,last_names, filenames):
             last = key[:5]
             first = key [5:-2]
             for i,fn in enumerate(first_names):
+                #fn = fn.translate(None,'.')
                 ln = last_names[i][:5]
                 if first == fn[1:3] and last == ln[:5]:
                     name = fn[1:] + ' ' + last_names[i]
@@ -108,8 +113,9 @@ def get_validation(path):
     perc_diff_pre =[]
     perc_diff_avg =[]
     # for all players
-    for key in final_dict:
-        player=key
+    playas=['Russell Westbrook','James Harden','LeBron James','Anthony Davis','DeMarcus Cousins','Stephen Curry', 'LaMarcus Aldridge', 'Blake Griffin', 'Kyrie Irving', 'Klay Thompson', 'Rudy Gay', 'Damian Lillard', 'Nikola Vucevic', 'Gordon Hayward', 'Chris Paul','Monta Ellis', 'Pau Gasol', 'Victor Oladipo', 'Kyle Lowry', 'John Wall', 'Marc Gasol', 'Dirk Nowitzki', 'Brook Lopez', 'Eric Bledsoe', 'Andrew Wiggins', 'Paul Millsap', 'Tyreke Evans', 'Kevin Love', 'Goran Dragic', 'Zach Randolph', 'Derrick Favors']
+    for p in playas:
+        player=p.lower()
         print player
         conn = MySQLdb.connect(
             user="root",
@@ -141,9 +147,10 @@ def get_validation(path):
         df_raw = df_train_plus_inquire.reindex()
         #df_operate.notnull()[0]==True
         cn=len(df_operate)
+        t=2
         #print cn
-        
-        if key != 'carmelo anthony' and key != 'wesley matthews' and key != 'chris bosh' and key!= 'kevin durant':
+        #if key != 'carmelo anthony' and key != 'wesley matthews' and key != 'chris bosh' and key!= 'kevin durant':
+        if t==2 :
             df_raw_scaled = df_raw.copy()
             df_raw_pure = df_raw.copy()
             df_raw_transform = df_raw.copy()
@@ -152,6 +159,9 @@ def get_validation(path):
             df_evaluate = df_raw_scaled.tail(cn)
             df_train_scaled = df_raw_scaled.iloc[:-cn]
             rf = RandomForestClassifier(n_estimators=1000)
+            #rf = DecisionTreeClassifier()
+            #rf= KNeighborsClassifier() 
+            rf.fit(df_train_scaled, df_target)
             average_stats=df_target.mean()
             rf.fit(df_train_scaled, df_target)
             predictions = rf.predict(df_evaluate)
@@ -189,9 +199,12 @@ def get_validation(path):
         acc.append(accuracy)
         perc_diff_pre.append(pdp)
         perc_diff_avg.append(pda)
-    final_acc = np.asarray(acc).median()
-    final_pdp = np.asarray(perc_diff_pre).median()
-    final_pda = np.asarray(perc_diff_avg).median()
+   #  final_acc = np.asarray(acc).mean()
+#     final_pdp = np.asarray(perc_diff_pre).mean()
+#     final_pda = np.asarray(perc_diff_avg).mean()
+    final_acc = np.asarray(acc).mean()
+    final_pdp = np.asarray(perc_diff_pre).mean()
+    final_pda = np.asarray(perc_diff_avg).mean()
     return final_acc, final_pdp, final_pda
         
 def main():
