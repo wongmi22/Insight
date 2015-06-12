@@ -50,6 +50,7 @@ def calculate_predictions(opponent,player,game_diff,home):
     df_raw_scaled = df_raw.copy()
     df_raw_pure = df_raw.copy()
     df_raw_transform = df_raw.copy()
+    df_raw_scaled = df_raw_scaled.applymap(lambda x: np.log(x))
     df_raw_scaled = df_raw_scaled.apply(lambda x:preprocessing.StandardScaler().fit(x).transform(x))
     df_raw_transform = df_raw_transform.apply(lambda x:preprocessing.StandardScaler().fit(x))
     df_evaluate = df_raw_scaled.tail(1)
