@@ -108,6 +108,17 @@ def get_data(filenames_dict,first_names,last_names, filenames):
                     final_dict[name]=f
     return final_dict
 
+def get_min(x):
+    gametime = []
+    for elem in (x):
+        
+        match = re.search('(\w+):(\w+)', elem)
+        minute = float(match.group(1))
+        second = float(match.group(2))/60
+        timet = minute+second
+        gametime.append(timet)
+    return gametime
+
 def clean_data_and_write_sql(path):
     
     # read in AllPlayerNames .csv from basketball-reference
@@ -150,7 +161,7 @@ def clean_data_and_write_sql(path):
     for key in final_dict:
         print key
         # read in the .csv player file
-        df_player=pd.read_csv('~/Insight/Players/2015/'+final_dict[key])
+        df_player=pd.read_csv('~/Insight/Players/2014/'+final_dict[key])
         # select for games actually played
         df_player1=df_player[df_player.GS =='0']
         df_player2=df_player[df_player.GS =='1']
@@ -169,19 +180,22 @@ def clean_data_and_write_sql(path):
         # differences in game-day
         df_player['DateDiff']=differences
         day, month = get_gameday_month(df_player.Date)
+        # minutes to float
+        gametime = get_min(df_player.MP)
+        df_player['MP']=gametime
         # get the month to merge team data into
         df_player['Month']=month
         df_player['Day']=day
         # drop player columns that are not for training or for target (add/remove 30 for 2015/2014)
-        df_player_clean = df_player.drop(df_player.columns[[5,7,10,11,14,16,17,19,20,28,29,30]], axis=1)
+        df_player_clean = df_player.drop(df_player.columns[[5,7,10,11,14,16,17,19,20,28,29]], axis=1)
         # read in team.csv
-        df_teams_new = pd.read_csv('~/Insight/TeamStats2015.csv')
+        df_teams_new = pd.read_csv('~/Insight/TeamStats2014.csv')
         # merge with player DataFrame
         complete_pandas=pd.merge(df_player_clean, df_teams_new, on=['Opp','Month'], how='inner')
         # SQL doesn't like % for the column names
         complete_pandas = complete_pandas.rename(columns={'FG%': 'FGpercent','3P%':'3Ppercent','FT%':'FTpercent','O3P%':'O3Ppercent','OFG%':'OFGpercent','OFT%':'OFTpercent','OBLK%':'OBLKpercent'})
         engine = create_engine("mysql+pymysql://root@localhost/Player_Team_Data") 
-        complete_pandas.to_sql('NBA_player_data', engine,if_exists='append')
+        complete_pandas.to_sql('NBA_player_data_MP', engine,if_exists='append')
   
     
 def main():
