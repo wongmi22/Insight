@@ -14,9 +14,7 @@
    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 
    <!-- Custom styles for this template -->
-   <link href="../static/css/starter-template.css" rel="stylesheet">
-
-   <link rel="stylesheet" href="../static/css/datepicker.css">
+   <link href="starter-template.css" rel="stylesheet">
 
    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
@@ -43,13 +41,13 @@
            <span class="icon-bar"></span>
            <span class="icon-bar"></span>
          </button>
-         <a class="navbar-brand" href="#">Fantasy Forecaster</a>
+         <a class="navbar-brand" href="#">Project name</a>
        </div>
        <div class="collapse navbar-collapse">
          <ul class="nav navbar-nav">
-           <li class="active"><a href="/home">Home</a></li>
-           <li><a href="http://linkedin.com/in/michaeldavidwong">About Me</a></li>
-           <li><a href="https://docs.google.com/presentation/d/1D28oHk5KW-pGuwwnd_03M8XzfGJsFF01vJAGsB5Yez4/pub?start=true&loop=false&delayms=60000">Slides</a></li>
+           <li class="active"><a href="#">Home</a></li>
+           <li><a href="#about">About</a></li>
+           <li><a href="#contact">Contact</a></li>
          </ul>
        </div><!--/.nav-collapse -->
      </div>
@@ -57,19 +55,17 @@
 
 <br><br>
 <div class="container">
-
+    <div class="row">
+    <div class="col-md-6">
     <div class="starter-template">
-        <h2>Fantasy Forecaster</h2>
-        <p>Enter player and game information</p>
+    
+  
+        <h2>Fantasy Forecasted!</h2>
+        <p>Enter another query</p>
     </div>
 
     <div class = "container">
-      <form  action="/output" method="GET">
-      <div class="hero-unit">
-                <label for="example1">Game Date:     </label>
-                <input  type="text" placeholder="Pick a game date"  id="example1" name='date'>
-            </div>
-            <!--
+
       <form  action="/output" method="GET">
         <div class="form-group">
           <label for="ID">Month  Name:</label>
@@ -80,40 +76,88 @@
         <div class="form-group">
           <label for="ID">Date  Name:</label>
           <input type="text" id="ID" name='date' placeholder="e.g. 2">
-        </div>-->
-        <form  action="/output" method="GET">
-        <div class="form-group">
-        <label for="ID">Sorted By:</label>    
-        <select name="metric">
-        <option value="relative">relative</option>
-        <option value="absolute">absolute</option>
-        </select>
         </div>
-        <!--
-      </div>
     <form  action="/output" method="GET">    
         <div class="form-group">
-          <label for="ID">Sorted By:  </label>
-          <input type="text" id="ID" name='metric' placeholder="e.g. relative or absolute">
-        </div> -->
-      <!--
+          <label for="ID">Sorted By?  Off:</label>
+          <input type="text" id="ID" name='metric' placeholder="e.g. Relative or Absolute">
+        </div>
+        <!--
     <form  action="/output" method="GET">    
         <div class="form-group">
           <label for="ID">Home or Away Game:</label>
           <input type="text" id="ID" name='Home' placeholder="e.g. home">
-        </div>
-        -->
+        </div>  
+      -->
         <div>
           <button type="submit" class="btn btn-default btn-lg">Predict Performance!</button>
         </div>
-
       </form>
     </div>
-
+    </div>
+    <div class="col-md-6">
+    <div class="starter-template">
+    
+    </div>
+    </div>
+    
+    
+    
+    
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="static/js/bootstrap.min.js"></script>
-
+  
   </div> <!-- /.container-->
+
+    <div class="container">
+      <div class="starter-template">
+        <h3>Results:</h3>
+        <p class="lead">Predicted Stats Per Category.</p>
+      </div>
+
+
+    <table class="table table-hover">
+      <tr><th>Player</th></tr>
+      </tr>
+      {% for name in df_big_sorted.index %}
+      <tr><td><img src="../static/Player_Photos/al_horford.png" alt="Player" style="width:200px;height:150px;"></td></tr>
+
+      <table class="table table-hover">
+
+      <tr><th>Name</th><th>Type</th><th> Points</th><th>3-Pointers</th><th>Rebounds</th><th>Assists</th><th>Steals</th><th>Blocks</th><th>Turnovers</th></tr>
+      {% for name in df_big_sorted.index %}
+      <tr><td>{{'Prediction'}}</td><td>{{ df_big_sorted.Prediction[name][0][0] }}</td><td>{{ df_big_sorted.Prediction[name][0][1]}}</td><td> {{ df_big_sorted.Prediction[name][0][2]}}</td><td>{{ df_big_sorted.Prediction[name][0][3]}}</td><td>{{ df_big_sorted.Prediction[name][0][4]}}</td><td>{{ df_big_sorted.Prediction[name][0][5]}}</td><td>{{ df_big_sorted.Prediction[name][0][6]}}</td></tr>
+
+      <tr><td>{{'Average'}}</td><td>{{ df_big_sorted.Average[name][0] }}</td><td>{{ df_big_sorted.Average[name][1]}}</td><td> {{ df_big_sorted.Average[name][2]}}</td><td>{{ df_big_sorted.Average[name][3]}}</td><td>{{ df_big_sorted.Average[name][4]}}</td><td>{{ df_big_sorted.Average[name][5]}}</td><td>{{ df_big_sorted.Average[name][6]}}</td></tr>
+
+      <tr><td></td><td>{{'Performance'}}</td><td>{{ df_big_sorted.Outlook[name][0] }}</td><td>{{ df_big_sorted.Outlook[name][1]}}</td><td> {{ df_big_sorted.Outlook[name][2]}}</td><td>{{ df_big_sorted.Outlook[name][3]}}</td><td>{{ df_big_sorted.Outlook[name][4]}}</td><td>{{ df_big_sorted.Outlook[name][5]}}</td><td>{{ df_big_sorted.Outlook[name][6]}}</td></tr>
+
+      {% endfor %}
+      {% endfor %}
+      </table>
+    </table>
+
+
+     </div><!-- /.container -->
+     <img src="../static/Player_Photos/al_horford.png" alt="Player" style="width:200px;height:150px;">
+<!--
+    <div class="container">
+      <div class="starter-template">
+        <h3>Fanduel Metric:</h3>
+        <p class="lead">Metric for Statistical Perfomance</p>
+      </div>
+        <table class="table table-hover">
+      <tr><th>Type</th><th> Fanduel Score</th></tr>
+      {% for f in fans %}
+      <tr><td>{{f[0]}}</td><td>{{f[1]}}</td></tr>
+      {% endfor %}
+      </table>
+
+      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+      <script src="static/js/bootstrap.min.js"></script>
+-->
+
+     </div><!-- /.container -->
 <!--
    <div class="container">
      <div class="starter-template">
@@ -128,9 +172,8 @@
    </table>
    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
    <script src="static/js/bootstrap.min.js"></script>
--->
+ -->
    </div><!-- /.container -->
-
 
 
    <!-- Bootstrap core JavaScript
@@ -138,19 +181,5 @@
    <!-- Placed at the end of the document so the pages load faster -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
    <script src="static/js/bootstrap.min.js"></script>
-   <script src="static/js/bootstrap-datepicker.js"></script>
-        <script type="text/javascript">
-            // When the document is ready
-            $(document).ready(function () {
-                
-                $('#example1').datepicker({
-                    format: "dd/mm/yyyy"
-                });  
-                $('#example1').datepicker().on('changeDate', function(){
-          $(this).blur();
-        });
-            
-            });
-        </script>
  </body>
 </html>

@@ -15,7 +15,6 @@
 
    <!-- Custom styles for this template -->
    <link href="../static/css/starter-template.css" rel="stylesheet">
-
    <link rel="stylesheet" href="../static/css/datepicker.css">
 
    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
@@ -64,7 +63,7 @@
     </div>
 
     <div class = "container">
-      <form  action="/output" method="GET">
+      <form  action="/output_team" method="GET">
       <div class="hero-unit">
                 <label for="example1">Game Date:     </label>
                 <input  type="text" placeholder="Pick a game date"  id="example1" name='date'>
@@ -81,7 +80,7 @@
           <label for="ID">Date  Name:</label>
           <input type="text" id="ID" name='date' placeholder="e.g. 2">
         </div>-->
-        <form  action="/output" method="GET">
+        <form  action="/output_team" method="GET">
         <div class="form-group">
         <label for="ID">Sorted By:</label>    
         <select name="metric">
@@ -89,20 +88,18 @@
         <option value="absolute">absolute</option>
         </select>
         </div>
-        <!--
+       
       </div>
-    <form  action="/output" method="GET">    
+      {% for names in playas %}
+    <form  action="/output_team" method="GET">    
         <div class="form-group">
-          <label for="ID">Sorted By:  </label>
-          <input type="text" id="ID" name='metric' placeholder="e.g. relative or absolute">
-        </div> -->
-      <!--
-    <form  action="/output" method="GET">    
-        <div class="form-group">
-          <label for="ID">Home or Away Game:</label>
-          <input type="text" id="ID" name='Home' placeholder="e.g. home">
-        </div>
-        -->
+          <label for="ID">Player:  </label>
+          <input type="text" id="ID" name={{names}} placeholder="e.g. lebron james">
+        </div> 
+      
+    {% endfor %}
+       <input action="/output_team" method="GET" name="playernum" value = {{n}} type="hidden"=> 
+       <li ><a id= "egs" href="http://127.0.0.1:5000/output_team?date=05%2F01%2F2015&metric=relative&Player_0=lebron+james&Player_1=kyle+lowry&Player_2=blake+griffin&Player_3=james+harden&playernum=4">Example: January 5th, Blake Griffin, Lebron James, James Harden, Kyle Lowry</a></li>
         <div>
           <button type="submit" class="btn btn-default btn-lg">Predict Performance!</button>
         </div>

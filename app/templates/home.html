@@ -11,11 +11,11 @@
    <title>Starter Template for Bootstrap</title>
 
    <!-- Bootstrap core CSS -->
-   <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+   <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
 
    <!-- Custom styles for this template -->
    <link href="../static/css/starter-template.css" rel="stylesheet">
-
    <link rel="stylesheet" href="../static/css/datepicker.css">
 
    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
@@ -32,7 +32,9 @@
    <![endif]-->
  </head>
 
- <body>
+ 
+
+  <body id=“background”>
 
    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
      <div class="container">
@@ -60,51 +62,72 @@
 
     <div class="starter-template">
         <h2>Fantasy Forecaster</h2>
-        <p>Enter player and game information</p>
+        <p>Choose the mode: Predict Your fantasy team OR Predict all NBA players</p>
     </div>
 
-    <div class = "container">
-      <form  action="/output" method="GET">
-      <div class="hero-unit">
-                <label for="example1">Game Date:     </label>
-                <input  type="text" placeholder="Pick a game date"  id="example1" name='date'>
-            </div>
-            <!--
-      <form  action="/output" method="GET">
+    <div>
+      
+        <form  action="/input" method="GET">
         <div class="form-group">
-          <label for="ID">Month  Name:</label>
-          <input type="text" id="ID" name='month' placeholder="e.g. 2 for February ">
-        </div>
-    <form  action="/output" method="GET">
-    
-        <div class="form-group">
-          <label for="ID">Date  Name:</label>
-          <input type="text" id="ID" name='date' placeholder="e.g. 2">
-        </div>-->
-        <form  action="/output" method="GET">
-        <div class="form-group">
-        <label for="ID">Sorted By:</label>    
-        <select name="metric">
-        <option value="relative">relative</option>
-        <option value="absolute">absolute</option>
+        <label for="ID">Prediction Mode:</label>    
+        <select name="mode", id = "dropdown", size='1'>
+        <option value="choose">Choose Mode...</option>  
+        <option value="all">Predict for All Players</option>
+        <option value="team">Predict for Your Team</option>
         </select>
         </div>
-        <!--
-      </div>
-    <form  action="/output" method="GET">    
-        <div class="form-group">
-          <label for="ID">Sorted By:  </label>
-          <input type="text" id="ID" name='metric' placeholder="e.g. relative or absolute">
-        </div> -->
-      <!--
-    <form  action="/output" method="GET">    
-        <div class="form-group">
-          <label for="ID">Home or Away Game:</label>
-          <input type="text" id="ID" name='Home' placeholder="e.g. home">
-        </div>
-        -->
+
+        <form  action="/input" method="GET">
+      <div id = "all" class="drop-down-show-hide" style="display:none">
         <div>
-          <button type="submit" class="btn btn-default btn-lg">Predict Performance!</button>
+                <label for="example1">Game Date:     </label>
+                <input  type="text" placeholder="Pick a game date"  id="example1" name='date'>
+                <li ><a id= "egs" href="/input?mode=all&date=05%2F01%2F2015&metric=relative&number=1">Example: January 5th</a></li>
+              </div>
+              <div>
+        <form  action="/input" method="GET">
+        <label for="ID">Sorted Players By:</label>    
+        <select name="metric">
+        <option value="relative">relative metrics</option>
+        <option value="absolute">absolute metrics</option>
+        </select>
+      </div>
+        <div> 
+
+          <button type="submit" class="btn btn-default btn-lg"> Predict Performance!</button>
+
+        </div>
+      </div>
+      
+       
+
+
+        <div id = "team" class="drop-down-show-hide" style="display:none">
+        <p>Enter the number of players on your Team</p>
+
+        <form  action="/input" method="GET">
+        <div class="form-group">
+        <label for="ID">Number of Players:</label>    
+        <select name="number">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+      </select>
+        
+    
+
+        <div>
+          <button type="submit" class="btn btn-default btn-lg"> Enter Your Team!</button>
         </div>
 
       </form>
@@ -138,13 +161,28 @@
    <!-- Placed at the end of the document so the pages load faster -->
    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
    <script src="static/js/bootstrap.min.js"></script>
+   <script type="text/javascript">
+   $('.drop-down-show-hide').hide();
+
+$('#dropdown').change(function(){
+$(this).find("option").each(function()
+{
+$('#' + this.value).hide();
+});
+    $('#' + this.value).show();
+
+});</script>
+
+
+   
    <script src="static/js/bootstrap-datepicker.js"></script>
         <script type="text/javascript">
             // When the document is ready
             $(document).ready(function () {
                 
                 $('#example1').datepicker({
-                    format: "dd/mm/yyyy"
+                    format: "dd/mm/yyyy",
+                    
                 });  
                 $('#example1').datepicker().on('changeDate', function(){
           $(this).blur();
@@ -152,5 +190,6 @@
             
             });
         </script>
+
  </body>
 </html>
