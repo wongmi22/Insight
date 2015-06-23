@@ -99,9 +99,12 @@
       
     {% endfor %}
        <input action="/output_team" method="GET" name="playernum" value = {{n}} type="hidden"=> 
-       <li ><a id= "egs" href="http://127.0.0.1:5000/output_team?date=05%2F01%2F2015&metric=relative&Player_0=lebron+james&Player_1=kyle+lowry&Player_2=blake+griffin&Player_3=james+harden&playernum=4">Example: January 5th, Blake Griffin, Lebron James, James Harden, Kyle Lowry</a></li>
+
         <div>
           <button type="submit" class="btn btn-default btn-lg">Predict Performance!</button>
+          <p></p>
+              <p></p>
+          <li ><a id= "egs" href="/output_team?date=05%2F01%2F2015&metric=relative&Player_0=lebron+james&Player_1=kyle+lowry&Player_2=blake+griffin&Player_3=james+harden&playernum=4">Example: January 5th, Blake Griffin, Lebron James, James Harden, Kyle Lowry</a></li>
         </div>
 
       </form>
