@@ -3,98 +3,123 @@ from flask import render_template, request
 from app import app
 import pymysql as mdb
 from a_Model import ModelIt
-from GetPrediction_ByDate_Flask import get_results
+from GetPrediction_ByDate_FlaskLm import get_results
+from GetPrediction_ByTeam_FlaskLm import get_results_team
 import pandas as pd
 import re
-db = mdb.connect(user="root", host="localhost", db="world_innodb", charset='utf8')
+
+def get_date(date):
+  match = re.search('(\w\w)/(\w\w)/(\w\w\w\w)', date)
+
+  day_i = match.group(1)
+  if day_i[0] == 0:
+    day_i = day_i[1]
+  month_i = match.group(2)
+  if month_i[0] == 0:
+    month_i = month_i[1]
+  year = match.group(3)
+
+  return day_i, month_i, year
+
 
 @app.route('/')
-@app.route('/index')
-def index():
-    return render_template("index.html",
-       title = 'Home', user = { 'nickname': 'Miguel' },
-       )
+def origin():
+  return render_template("home.html")
 
-@app.route('/db')
-def cities_page():
-    with db:
-        cur = db.cursor()
-        cur.execute("SELECT Name FROM City LIMIT 15;")
-        query_results = cur.fetchall()
-    cities = ""
-    for result in query_results:
-        cities += result[0]
-        cities += "<br>"
-    return cities
 
-@app.route("/db_fancy")
-def cities_page_fancy():
-    with db:
-        cur = db.cursor()
-        cur.execute("SELECT Name, CountryCode, Population FROM City ORDER BY Population LIMIT 15;")
-
-        query_results = cur.fetchall()
-    cities = []
-    for result in query_results:
-        cities.append(dict(name=result[0], country=result[1], population=result[2]))
-    return render_template('cities.html', cities=cities)
+@app.route('/home')
+def cities_home():
+  return render_template("home.html")
 
 @app.route('/input')
 def cities_input():
-  return render_template("input_project.html")
+  mode =request.args.get('mode')
+  number =int(request.args.get('number'))
+  player_number = []
+
+  # Produce variable names for the player form ID's
+  for i in range(number):
+    playa = 'Player_'+ str(i)
+    player_number.append(playa)
+
+  # If user chooses to predict all players
+  if mode == 'all':
+    month = request.args.get('month')
+    date = request.args.get('date')
+    metric = request.args.get('metric')
+  # check if user properly entered date via datepicker calendar.  Default date is January 5th, 2015
+    if len(date) > 0:
+
+      day_i,month_i,year = get_date(date)
+
+    else: 
+      
+      day_i = 5
+      month_i = 1
+      date = '01/05/2015'
+    choice = metric == 'relative'
+    df_big_sorted = get_results(month_i,day_i,metric)
+
+    return render_template("output_project.html", df_big_sorted = df_big_sorted, d=date, m=choice)
+  # If user chooses to predict a team of players
+  else:
+    return render_template("input_projects2.html",playas=player_number,n=number)
 
   
-@app.route('/output')
-def cities_output():
-  #pull 'ID' from input field and store it
+@app.route('/output_team')
+def teams_output():
+ 
+  #Predictions by date: For a specified team
   month = request.args.get('month')
   date = request.args.get('date')
   metric = request.args.get('metric')
+  num = int(request.args.get('playernum'))
+  player_list = []
+
+  # Aggregate entered player names as a list
+  for i in range(num):
+    playa = 'Player_'+ str(i)
+    player_list.append(str(request.args.get(playa)))
+
+  # check if user properly entered date via datepicker calendar.  Default date is January 5th, 2015
+  if len(date) > 0:
+    
+    day_i,month_i,year = get_date(date)
+
+  else: 
+    day_i = 5
+    month_i = 1
+    date = '01/05/2015'
+  choice = metric == 'relative'
+
+  # return data frame from GetPrediction_ByTeam_FlaskLm.py
+  df_big_sorted,df_absent,df_big_sorted_acc = get_results_team(month_i,day_i,metric,player_list)
+  
+  #boolean to determine if players either played or didn't play on that date
+  show = len(df_big_sorted)>0
+  show2 = len(df_absent>0)
+  return render_template("output_project_team.html", df_big_sorted=df_big_sorted, ab=df_absent,d=date, m=choice, show=show, show2=show2)
+  
+@app.route('/output')
+def cities_output():
+  #Predictions by date: All Players
+  month = request.args.get('month')
   date = request.args.get('date')
-  match = re.search('(\w\w)/(\w\w)/(\w\w\w\w)', date)
-  day = match.group(1)
-  if day[0] == 0:
-    day = day[1]
-  month = match.group(2)
-  if month[0] == 0:
-    month = month[1]
-  year = match.group(3)
-  print day, month, year
-  #home = request.args.get('Home')
+  metric = request.args.get('metric')
   
-  
-  # with db:
-#     cur = db.cursor()
-#     #just select the city from the world_innodb that the user inputs
-#     cur.execute("SELECT Name, CountryCode, Population FROM City WHERE Name='%s';" % city)
-#     query_results = cur.fetchall()
-# 
-#   cities = []
-#   for result in query_results:
-#     cities.append(dict(name=result[0], country=result[1], population=result[2]))
-#   #call a function from a_Model package. note we are only pulling one result in the query
-#   pop_input = cities[0]['population']
-  # data = get_results(team, player,days, home)
-  # pre_rf = list(prediction_rf[0])
-  # pre_rf.insert(0, 'Random Forest')
-  # pre_lm = list(prediction_lm)
-  # pre_lm.insert(0, 'Linear Model')
-  # avg = list(avg_stats)
-  # avg.insert(0, 'Average')
-  # out_rf = list(outlook_rf)
-  # out_rf.insert(0, 'Performance (Rf)')
-  # out_lm = list(outlook_lm)
-  # out_lm.insert(0, 'Performance (Lm)')
-  
-  # Fanduel = [['Prediction',predict_fanduel],['Average', average_fanduel],['Performance',outlook_fanduel]]
-  # if outlook_fanduel > 0:
-  #   Diagnosis= 'OUTPERFORM!'
-  # elif outlook_fanduel <0:
-  #   Diagnosis= 'UNDERPERFORM!'
-  # else:
-  #   Diagnosis= 'Average Performance' 
 
-  df_big_sorted = get_results(month,day,metric)
+  # check if user properly entered date via datepicker calendar.  Default date is January 5th, 2015
+ 
+  if len(date) > 0:
+    
+    day_i,month_i,year = get_date(date)
 
-  
-  return render_template("output_project.html", df_big_sorted = df_big_sorted, d=date)
+  else: 
+    day_i = 5
+    month_i = 1
+    date = '01/05/2015'
+  choice = metric == 'relative'
+  # return data frame from GetPrediction_ByDate_FlaskLm.py
+  df_big_sorted = get_results(month_i,day_i,metric)
+
+  return render_template("output_project.html", df_big_sorted = df_big_sorted, d=date, m=choice)
