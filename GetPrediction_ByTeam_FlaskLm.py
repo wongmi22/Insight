@@ -198,13 +198,6 @@ def get_results_team(month,date,metric,players):
     df_absent = pd.DataFrame(abs_dict, index =['Photo', 'Dummy'])
     df_absent = df_absent.T
     return df_big_sorted, df_absent, df_big_sorted_acc
-  # +++your code here+++
-  # Call your functions
-  
-
-
-
-# In[ ]:
 
 
 
