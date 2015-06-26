@@ -8,7 +8,7 @@
    <meta name="author" content="">
    <link rel="icon" href="../../favicon.ico">
 
-   <title>Starter Template for Bootstrap</title>
+   <title>Fantasy Forecaster</title>
 
    <!-- Bootstrap core CSS -->
    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -34,7 +34,7 @@
 
  
 
-  <body id=“background”>
+  <body id="background">
 
    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
      <div class="container">
@@ -58,6 +58,7 @@
    </div>
 
 <br><br>
+
 <div class="container">
 
     <div class="starter-template">
@@ -75,6 +76,7 @@
         <option value="all">Predict for All Players</option>
         <option value="team">Predict for Your Team</option>
         </select>
+
         </div>
 
         <form  action="/input" method="GET">
@@ -82,85 +84,72 @@
           <div>
                 <label for="example1">Game Date:     </label>
                 <input  type="text" placeholder="Pick a game date"  id="example1" name='date'>
-                <a href="/input?mode=all&date=05%2F01%2F2015&metric=relative&number=1">Example: January 5th</a>
+                <a href="/output?date=&metric=relative">Example: January 5th</a>
           </div>
-        <div>
+          <div>
 
               <p></p>
               <p></p>
 
-        <form  action="/input" method="GET">
-        <label for="ID">Sorted Players By:</label>    
-        <select name="metric">
-        <option value="relative">relative metrics</option>
-        <option value="absolute">absolute metrics</option>
-        </select>
-      </div>
-        <div> 
+          <form  action="/input" method="GET">
+          <label for="ID">Sorted Players By:</label>    
+          <select name="metric">
+          <option value="relative">relative performance</option>
+          <option value="absolute">absolute performance</option>
+          </select>
+          </div>
+          
+          <div> 
             <p></p>
               <p></p>
 
           <button type="submit" class="btn btn-default btn-lg"> Predict Performance!</button>
 
+          </div>
         </div>
-      </div>
       
        
 
 
         <div id = "team" class="drop-down-show-hide" style="display:none">
-        <p>Enter the number of players on your Team</p>
+          <p>Enter the number of players on your Team</p>
 
-        <form  action="/input" method="GET">
-        <div class="form-group">
-        <label for="ID">Number of Players:</label>    
-        <select name="number">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="13">13</option>
-      </select>
+          <form  action="/input" method="GET">
+          <div class="form-group">
+            <label for="ID">Number of Players:</label>    
+            <select name="number">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            </select>
         
     
 
-        <div>
-          <p></p>
-              <p></p>
-          <button type="submit" class="btn btn-default btn-lg"> Enter Your Team!</button>
-        </div>
+              <div>
+                <p></p>
+                <p></p>
+                <button type="submit" class="btn btn-default btn-lg"> Enter Your Team!</button>
+              </div>
 
-      </form>
-    </div>
+          </form>
+          </div>
 
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
+      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+      <script src="static/js/bootstrap.min.js"></script>
 
-  </div> <!-- /.container-->
-<!--
-   <div class="container">
-     <div class="starter-template">
-       <h1>Bootstrap starter template</h1>
-       <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-     </div>
-   <table class="table table-hover">
-   <tr><th>Name</th><th>Country</th><th>Population</th></tr>
-   {% for city in cities %}
-   <tr><td>{{ city['name'] }}</td><td>{{ city['country']}}</td><td> {{ city['population'] }}</td></tr>
-   {% endfor %}
-   </table>
-   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-   <script src="static/js/bootstrap.min.js"></script>
--->
-   </div><!-- /.container -->
+        </div> <!-- /.container-->
+
+      </div><!-- /.container -->
 
 
 
@@ -172,14 +161,14 @@
    <script type="text/javascript">
    $('.drop-down-show-hide').hide();
 
-$('#dropdown').change(function(){
-$(this).find("option").each(function()
-{
-$('#' + this.value).hide();
-});
+   $('#dropdown').change(function(){
+  $(this).find("option").each(function()
+  {
+  $('#' + this.value).hide();
+  });
     $('#' + this.value).show();
 
-});</script>
+  });</script>
 
 
    

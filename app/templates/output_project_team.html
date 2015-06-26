@@ -8,12 +8,15 @@
    <meta name="author" content="">
    <link rel="icon" href="../../favicon.ico">
 
-   <title>Starter Template for Bootstrap</title>
+   <title>Fantasy Forecaster</title>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
    <!-- Bootstrap core CSS -->
    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 
-   <link rel="stylesheet" href="../static/css/datepicker.css">
+  <link rel="stylesheet" href="../static/css/datepicker.css">
    
 
    <!-- Custom styles for this template -->
@@ -26,7 +29,11 @@
 
    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
-   
+   <script>
+   $(function<() { 
+    $("#tabs").tabs();
+    });
+   </script>
 
    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
    <!--[if lt IE 9]>
@@ -59,102 +66,107 @@
    </div>
 
 <br><br>
-<div class="container">
-    <div class="row">
-    <div class="col-md-6">
+  <div class="container">
+    
     <div class="starter-template">
     
-  
-        <h2>Fantasy Forecasted!</h2>
-        <p>Enter another query</p>
+      <h2>Fantasy Forecasted!</h2>
+      <p>Enter another query</p>
     </div>
-
-    
-            
-        
 
     <div class = "container">
       <form  action="/output" method="GET">
       <div class="hero-unit">
         <label for="example1">Game Date:</label>
-                <input  type="text" placeholder="Pick a game date"  id="example1" name='date'>
-            </div>
-            <!--
+        <input  type="text" placeholder="Pick a game date"  id="example1" name='date'>
+      </div>
       <form  action="/output" method="GET">
-        <div class="form-group">
-          <label for="ID">Month  Name:</label>
-          <input type="text" id="ID" name='month' placeholder="e.g. 2 for February ">
-        </div>
-    <form  action="/output" method="GET">
-    
-        <div class="form-group">
-          <label for="ID">Date  Name:</label>
-          <input type="text" id="ID" name='date' placeholder="e.g. 2">
-        </div>-->
-        <form  action="/output" method="GET">
-        <div class="form-group">
+      <div class="form-group">
         <label for="ID">Sorted By:</label>    
         <select name="metric">
-        <option value="relative">relative</option>
-        <option value="absolute">absolute</option>
+        <option value="relative">relative performance</option>
+        <option value="absolute">absolute performance</option>
         </select>
-        </div><!--
-    <form  action="/output" method="GET">    
-        <div class="form-group">
-          <label for="ID">Sorted By:</label>
-          <input type="text" id="ID" name='metric' placeholder="e.g. relative or absolute">
-        </div>-->
-        <!--
-    <form  action="/output" method="GET">    
-        <div class="form-group">
-          <label for="ID">Home or Away Game:</label>
-          <input type="text" id="ID" name='Home' placeholder="e.g. home">
-        </div>  
-      -->
-        <div>
-          <button type="submit" class="btn btn-default btn-lg">Predict Performance!</button>
-        </div>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-default btn-lg">Predict Performance!</button>
+      </div>
       </form>
-    </div>
-    </div>
-    <div class="col-md-6">
-    <div class="starter-template">
-    
-    </div>
-    </div>
-    
-    
-    
-    
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
-  
+      
+
+      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+      <script src="static/js/bootstrap.min.js"></script>
+
+    </div> 
   </div> <!-- /.container-->
 
-    <div class="container">
-      <div class="starter-template">
-        {% if show %}
-        <h3>Results for {{d}}</h3>
-        <p class="lead">Predicted Stats Per Category.</p>
-      </div>
+  <div class="container">
+    <div class="starter-template">
+      {% if show %}
+      <h3>Results for {{d}}</h3>
+      <p class="lead">Predicted Stats Per Category.</p>
+    </div>
+
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#performance">By Performance</a></li>
+      <li><a data-toggle="tab" href="#category">By Category</a></li>
+    </ul>
+      
+    <div class="tab-content">
+      <div id="performance" class="tab-pane fade in active">
+      
+        <table class="table table-hover" width="600">
+    
+        <tr><th>Player</th><th>Opponent</th><th>{% if m %} Relative Performance {% else %} Absolute Performance {% endif %}</th></tr>
+        {% for name in df_big_sorted.index %}
+          <tr><td width = '200'><img src={{df_big_sorted.Photo[name]}} alt="Player" style="width:120px;height:100px;"><figcaption>{{name}}</figcaption></td><td width ='200'><img src={{df_big_sorted.Team_Photo[name]}} alt="Player" style="width:120px;height:100px;"><figcaption>{{df_big_sorted.Conditions[name][0]}}</figcaption></td><td class="certain" width='200'> {% if m %}{{df_big_sorted.FMetric_Outlook[name]}} {% else %}{{df_big_sorted.Fmetric[name]}}{% endif %}  </td></tr>
+
+        {% endfor %}
+
+        </table>
+        {% endif %} 
+
+        {% if show2 %}
+
+      <h3>These players on your team are not playing on {{d}}</h3>
+        
       
       <table class="table table-hover">
-      <tr><th>Player</th><th>Opponent</th><th>Fanduel Metric</th><th>Type</th><th> Points</th><th>3-Pointers</th><th>Rebounds</th><th>Assists</th><th>Steals</th><th>Blocks</th><th>Turnovers</th></tr>
+      <tr>
+      {% for name in ab.index%}  
+      <th></th>
+      {% endfor %}
+      </tr>
+      <tr>
+      {% for name in ab.index%}
+      <td width = '200'><img src={{ab.Photo[name]}} alt="Player" style="width:120px;height:100px;"><figcaption>{{name}}</figcaption></td>
+      {% endfor %}
+      </tr>
+      </table>
+      {% endif %} 
+
+    </div>
+
+    <div id="category" class="tab-pane fade">
+        
+      <table class="table table-hover">
+      <tr><th>Player</th><th>Opponent</th><th>Type</th><th>Points</th><th>3PM</th><th>Rebounds</th><th>Assists</th><th>Steals</th><th>Blocks</th><th>Turnovers</th></tr>
+
       {% for name in df_big_sorted.index %}
-      <tr><td rowspan="3"><img src={{df_big_sorted.Photo[name]}} alt="Player" style="width:120px;height:100px;"><figcaption>{{name}}</figcaption></td><td rowspan="3"><img src={{df_big_sorted.Team_Photo[name]}} alt="Player" style="width:120px;height:100px;"><figcaption>{{df_big_sorted.Conditions[name][0]}}</figcaption></td><td class="certain" rowspan="2"> {% if m %}{{df_big_sorted.FMetric_Outlook[name]}} {% else %}{{df_big_sorted.Fmetric[name]}}{% endif %}  </td><td>{{'Prediction'}}</td><td>{{ df_big_sorted.Prediction[name][0][0] }}</td><td>{{ df_big_sorted.Prediction[name][1][0]}}</td><td> {{ df_big_sorted.Prediction[name][2][0]}}</td><td>{{ df_big_sorted.Prediction[name][3][0]}}</td><td>{{ df_big_sorted.Prediction[name][4][0]}}</td><td>{{ df_big_sorted.Prediction[name][5][0]}}</td><td>{{ df_big_sorted.Prediction[name][6][0]}}</td></tr>
+      <tr><td rowspan="2"><img src={{df_big_sorted.Photo[name]}} alt="Player" style="width:120px;height:100px;"><figcaption>{{name}}</figcaption></td><td rowspan="2"><img src={{df_big_sorted.Team_Photo[name]}} alt="Player" style="width:120px;height:100px;"><figcaption>{{df_big_sorted.Conditions[name][0]}}</figcaption></td><td>{{'Prediction'}}</td><td>{{ df_big_sorted.Prediction[name][0][0] }}</td><td>{{ df_big_sorted.Prediction[name][1][0]}}</td><td> {{ df_big_sorted.Prediction[name][2][0]}}</td><td>{{ df_big_sorted.Prediction[name][3][0]}}</td><td>{{ df_big_sorted.Prediction[name][4][0]}}</td><td>{{ df_big_sorted.Prediction[name][5][0]}}</td><td>{{ df_big_sorted.Prediction[name][6][0]}}</td></tr>
 
       <tr><td>{{'Average'}}</td><td>{{ df_big_sorted.Average[name][0] }}</td><td>{{ df_big_sorted.Average[name][1]}}</td><td> {{ df_big_sorted.Average[name][2]}}</td><td>{{ df_big_sorted.Average[name][3]}}</td><td>{{ df_big_sorted.Average[name][4]}}</td><td>{{ df_big_sorted.Average[name][5]}}</td><td>{{ df_big_sorted.Average[name][6]}}</td></tr>
 
-      <tr><td>{{df_big_sorted.Accuracy[name][0][0]}}</td><td>{{'Accuracy %'}}</td><td>{{ df_big_sorted.Accuracy[name][0][1] }}</td><td>{{ df_big_sorted.Accuracy[name][0][2]}}</td><td> {{ df_big_sorted.Accuracy[name][0][3]}}</td><td>{{ df_big_sorted.Accuracy[name][0][4]}}</td><td>{{ df_big_sorted.Accuracy[name][0][5]}}</td><td>{{ df_big_sorted.Accuracy[name][0][6]}}</td><td>{{ df_big_sorted.Accuracy[name][0][7]}}</td></tr>
+        
 
       {% endfor %}
 
       </table>
-      {% endif %} 
+      
       {% if show2 %}
       <h3>These players on your team are not playing on {{d}}</h3>
-        
       
+    
       <table class="table table-hover">
         <tr>
       {% for name in ab.index%}  
@@ -167,43 +179,10 @@
       {% endfor %}
       </tr>
       </table>
-{% endif %} 
-     </div><!-- /.container -->
+      {% endif %}
+    </div>
+  </div>  <!-- /.container -->
     
-<!--
-    <div class="container">
-      <div class="starter-template">
-        <h3>Fanduel Metric:</h3>
-        <p class="lead">Metric for Statistical Perfomance</p>
-      </div>
-        <table class="table table-hover">
-      <tr><th>Type</th><th> Fanduel Score</th></tr>
-      {% for f in fans %}
-      <tr><td>{{f[0]}}</td><td>{{f[1]}}</td></tr>
-      {% endfor %}
-      </table>
-
-      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-      <script src="static/js/bootstrap.min.js"></script>
--->
-
-     </div><!-- /.container -->
-<!--
-   <div class="container">
-     <div class="starter-template">
-       <h1>Bootstrap starter template</h1>
-       <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-     </div>
-   <table class="table table-hover">
-   <tr><th>Name</th><th>Country</th><th>Population</th></tr>
-   {% for city in cities %}
-   <tr><td>{{ city['name'] }}</td><td>{{ city['country']}}</td><td> {{ city['population'] }}</td></tr>
-   {% endfor %}
-   </table>
-   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-   <script src="static/js/bootstrap.min.js"></script>
- -->
-   </div><!-- /.container -->
 
 
    <!-- Bootstrap core JavaScript
@@ -226,5 +205,7 @@
             
             });
         </script>
+
+  
  </body>
 </html>
